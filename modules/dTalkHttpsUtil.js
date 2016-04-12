@@ -10,12 +10,17 @@ module.exports = {
             url: oapiHost + path
         };
 
-        request(options, function(err, response, body) {
-            if (!err) {
 
+
+        request(options, function(err, response, body) {
+            console.log(err);
+            if (!err) {
+console.log(body);
                 if (body && 0 === body.errcode) {
+                    console.log('++success');
                     cb.success(body);
                 } else {
+                    console.log('++error');
                     cb.error(body);
                 }
 
