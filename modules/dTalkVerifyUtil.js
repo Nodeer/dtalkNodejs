@@ -3,8 +3,8 @@ var DTalkCrypt = require('./dTalkCrypt'),
     fs = require('fs'),
     path = require('path');
 
-var config = require("./data/dTalkConfig");
-
+var config = require("../data/dTalkConfig");
+console.log('dTalkConfig : '+JSON.stringify(config));
 config.prototype = {
     /*
     "suite_ticket"事件每二十分钟推送一次,数据格式如下
