@@ -9,7 +9,7 @@ var WebAppUtil = {
         // GET https://oapi.dingtalk.com/department/list?access_token=ACCESS_TOKEN
         getDepartmentList: function(access_token, cb) {
 
-            dTalkHttpsUtil.post('/department/list?access_token=' + access_token, data, cb);
+            dTalkHttpsUtil.get('/department/list?access_token=' + access_token, data, cb);
             /*
             {
               "errcode": 0,
@@ -54,7 +54,7 @@ exports.doAction = function (corpId, res) {
                                         success: function(data) {
                                             console.log(data);
                                             var access_token = data.access_token;
-                                            
+
                                             WebAppUtil.getDepartmentList(access_token, {
                                                 success: function(data) {
                                                     console.log(data);

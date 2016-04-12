@@ -4,11 +4,10 @@ var oapiHost = 'https://oapi.dingtalk.com';
 
 module.exports = {
     // get json数据
-    get: function(path, data, cb) {
+    get: function(path, cb) {
         var options = {
             method: 'GET',
-            url: oapiHost + path,
-            json: data
+            url: oapiHost + path
         };
 
         request(options, function(err, response, body) {
