@@ -26,7 +26,8 @@ var WebAppUtil = {
             }
             */
 
-        };
+        }
+    };
 
 exports.doAction = function (corpId, res) {
 
