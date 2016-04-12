@@ -13,9 +13,19 @@ module.exports = {
 
 
         request(options, function(err, response, body) {
-            console.log(err);
+            
             if (!err) {
-console.log(body);
+/*
+{
+  "department": [ { "autoAddUser": false,  "createDeptGroup": false, "id": 1,"name": "wxmsfsds"}],
+  "errcode": 0,
+  "errmsg": "ok"
+}
+*/
+console.log( body);
+console.log( 0 == body.errcode);
+console.log( 0 === body.errcode);
+
                 if (body && 0 === body.errcode) {
                     console.log('++success');
                     cb.success(body);
