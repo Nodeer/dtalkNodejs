@@ -53,9 +53,8 @@ exports.doAction = function (corpId, cb) {
                                     dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode, {
                                         success: function(data) {
                                             console.log(data);
-                                            var access_token = data.access_token;
 
-                                            WebAppUtil.getDepartmentList(access_token, cb);
+                                            WebAppUtil.getDepartmentList(data.access_token, cb);
                                         },
                                         error: function(err) {
                                             console.log(err);

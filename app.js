@@ -69,7 +69,7 @@ app.get('/ddWebapp/birthday/', function(req, res) {
             res.render('birthday', { title: '生日快乐', data: data });
         },
         error: function(err) {
-
+console.log(err);
             res.render('birthday', { title: '生日快乐', errMsg: '获取信息失败' });
         }
     });
