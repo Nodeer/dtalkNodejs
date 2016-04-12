@@ -59,8 +59,11 @@ app.get('/:cityId', function(req, res) {
     res.render('home', { title: '天气预报' });
 });
 
+
+var dTalkWebAppUtil = require('./modules/dTalkWebAppUtil');
 app.get('/ddWebapp/birthday/', function(req, res) {
 console.log(req.url);
+dTalkWebAppUtil.doAction(req.query.corpId, res);
     res.render('birthday', { title: '生日快乐' });
 });
 
