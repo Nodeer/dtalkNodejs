@@ -63,7 +63,7 @@ app.get('/:cityId', function(req, res) {
 var dTalkWebAppUtil = require('./modules/dTalkWebAppUtil');
 app.get('/ddWebapp/birthday/', function(req, res) {
 console.log(req.url);
-dTalkWebAppUtil.doAction(req.query.corpId, res);
+dTalkWebAppUtil.doAction(req.query.corpid, res);
     res.render('birthday', { title: '生日快乐' });
 });
 
