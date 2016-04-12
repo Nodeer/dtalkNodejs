@@ -1,0 +1,19 @@
+{
+    "name": "rainbowWeather",
+    "description": "rainbowWeather Express app",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "express": "3.4.7",
+        "request": "2.65.0",
+        "express-handlebars": "^2.0.1",
+        "node-cache": "3.0.0",
+        "jsdom": "8.0.2",
+        "log4js": "0.6.27",
+        "body-parser": "1.15.0",
+        "request": "2.70.0",
+        "rx": "4.1.0",
+        "newrelic": "1.25.5"
+    }
+
+}

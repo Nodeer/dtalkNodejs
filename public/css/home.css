@@ -1,0 +1,15 @@
+
+#weather-today {text-align:center; margin:0 auto;}
+.weatherCity {font-size:24px;}
+.weatherTempNow {font-size:128px;}
+.upFlag{font-size:32px;vertical-align:180%;}
+
+.weatherMsg {font-size:20px;}
+.weatherAqi {font-size:20px;}
+.weatherAqi span {font-size:14px;}
+
+#weather-forcast {text-align:center; margin: 30px 10px 0px 10px;}
+.weatherDay-item {float:left; margin: 0px;width:20%;}
+.weatherIcon {padding : 5px; width: 50px;height: 50px}
+
+.weatherDay-first{color:gray;}

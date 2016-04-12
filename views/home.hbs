@@ -1,0 +1,32 @@
+
+<style type="text/css">.fancybox-margin{margin-right:0px;}</style>
+
+<link type="text/css" rel="stylesheet" href="/css/mui.min.css" >
+
+    <div id="content-wrapper">
+      <div class="mui--appbar-height"></div>
+      <div class="mui-container-fluid">
+
+
+    	<div id="weather-today"></div>
+    	<div id="weather-forcast"></div>
+      </div>
+	</div>
+
+
+<script type="text/html" id="template-weather-today">
+<div class="weatherCity">{realtime.city}</div>
+<div class="weatherTempNow">{realtime.temp}<span class='upFlag'>°</span></div>
+<div class="weatherMsg">{realtime.weather} {realtime.temp_day_night}</div>
+<div class="weatherAqi"><span>空气质量:</span> {realtime.aqi}</div>
+</script>
+
+
+<script type="text/html" id="template-weather-day">
+<div id="weatherDay" class="weatherDay-item mui--divider-left">
+	<div id="weather-weekDay">{dayWther.week}</div>
+  <img src="imgs/day{dayWther.img}.png" class="weatherIcon" />
+  <div id="weather-weekDay">{dayWther.weather}</div>
+  <div id="weather-dayTemp">{dayWther.temp_day_night}</div>
+</div>
+</script>

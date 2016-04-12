@@ -1,0 +1,13 @@
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36691,"time":"2016-03-31T11:47:51.546Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36691,"time":"2016-03-31T11:47:57.445Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/332932/applications/20813890","component":"new_relic_response"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36691,"time":"2016-03-31T11:47:57.446Z","msg":"Connected to collector-185.newrelic.com:443 with agent run ID 91613204242499081.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36974,"time":"2016-03-31T12:14:36.662Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36974,"time":"2016-03-31T12:14:40.890Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/332932/applications/20813890","component":"new_relic_response"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":36974,"time":"2016-03-31T12:14:40.891Z","msg":"Connected to collector-185.newrelic.com:443 with agent run ID 91613204242594591.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":39116,"time":"2016-04-01T05:10:28.932Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":39116,"time":"2016-04-01T05:10:34.602Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/332932/applications/20813890","component":"new_relic_response"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":39116,"time":"2016-04-01T05:10:34.603Z","msg":"Connected to collector-185.newrelic.com:443 with agent run ID 91613204246794375.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":40224,"time":"2016-04-01T08:31:59.876Z","msg":"Starting New Relic for Node.js connection process."}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":40224,"time":"2016-04-01T08:32:13.788Z","msg":"Reporting to: https://rpm.newrelic.com/accounts/332932/applications/20813890","component":"new_relic_response"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":40224,"time":"2016-04-01T08:32:13.789Z","msg":"Connected to collector-185.newrelic.com:443 with agent run ID 91613204247562612.","component":"collector_api"}
+{"v":0,"level":30,"name":"newrelic","hostname":"Wxm.local","pid":57003,"time":"2016-04-08T10:12:09.240Z","msg":"Starting New Relic for Node.js connection process."}
