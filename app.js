@@ -4,9 +4,9 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 
-app.use(bodyParser.json({limit: '1mb'}));  //body-parser 解析json格式数据
-app.use(bodyParser.urlencoded({            //此项必须在 bodyParser.json 下面,为参数编码
-  extended: true
+app.use(bodyParser.json({ limit: '1mb' })); //body-parser 解析json格式数据
+app.use(bodyParser.urlencoded({ //此项必须在 bodyParser.json 下面,为参数编码
+    extended: true
 }));
 
 app.use(express.static(__dirname + '/public'));
@@ -17,13 +17,13 @@ var myCache = new NodeCache();
 var dTalkVerifyUtil = require('./modules/dTalkVerifyUtil');
 
 app.post('/ddWebapp/verification', function(req, res) {
-    
+
     var params = {
         nonce: req.query.nonce,
         timestamp: req.query.timestamp,
         signature: req.query.signature,
         url: decodeURIComponent(req.url),
-        encrypt:req.body.encrypt
+        encrypt: req.body.encrypt
     };
 
     dTalkVerifyUtil.verification(params, {
@@ -62,13 +62,21 @@ app.get('/:cityId', function(req, res) {
 
 var dTalkWebAppUtil = require('./modules/dTalkWebAppUtil');
 app.get('/ddWebapp/birthday/', function(req, res) {
-console.log(req.url);
-dTalkWebAppUtil.doAction(req.query.corpid, res);
-    res.render('birthday', { title: '生日快乐' });
+    
+    dTalkWebAppUtil.doAction(req.query.corpid, {
+        success: function(data) {
+            console.log(data);
+            res.render('birthday', { title: '生日快乐', data: data });
+        },
+        error: function(err) {
+
+            res.render('birthday', { title: '生日快乐', errMsg: '获取信息失败' });
+        }
+    });
 });
 
 app.get('/ddWebapp/taxicar/', function(req, res) {
-console.log(req.url);
+    console.log(req.url);
     res.render('taxicar', { title: '打车回家' });
 });
 

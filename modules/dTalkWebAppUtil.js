@@ -29,7 +29,7 @@ var WebAppUtil = {
         }
     };
 
-exports.doAction = function (corpId, res) {
+exports.doAction = function (corpId, cb) {
 
             var permanentCode = '';
 
@@ -55,15 +55,7 @@ exports.doAction = function (corpId, res) {
                                             console.log(data);
                                             var access_token = data.access_token;
 
-                                            WebAppUtil.getDepartmentList(access_token, {
-                                                success: function(data) {
-                                                    console.log(data);
-
-                                                },
-                                                error: function(err) {
-                                                    console.log(err);
-                                                }
-                                            });
+                                            WebAppUtil.getDepartmentList(access_token, cb);
                                         },
                                         error: function(err) {
                                             console.log(err);

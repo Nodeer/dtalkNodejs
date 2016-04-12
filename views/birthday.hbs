@@ -1,1 +1,36 @@
-生日快乐
+公司部门列表：
+
+{{#if errMsg}}
+  <p>{{errMsg}}</p>
+{{else}}
+
+
+  <table border="1">
+  <thead>
+    <tr>
+      <th>序号</th>
+      <th>名字</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+  {{#each data.department}}
+  <tr>
+    
+    <td>{{this.id}}</td>
+      <td>{{this.name}}</td>
+    </tr>
+ {{/each}}
+   
+  </tbody>
+</table>
+
+
+{{/if}}
+
+
+
+
+
+
