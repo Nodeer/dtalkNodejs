@@ -59,6 +59,16 @@ app.get('/:cityId', function(req, res) {
     res.render('home', { title: '天气预报' });
 });
 
+app.get('/ddWebapp/birthday/', function(req, res) {
+console.log(req.url);
+    res.render('birthday', { title: '生日快乐' });
+});
+
+app.get('/ddWebapp/taxicar/', function(req, res) {
+console.log(req.url);
+    res.render('taxicar', { title: '打车回家' });
+});
+
 // 创建服务端
 http.createServer(app).listen(8080, function() {
     console.log('Server listen http://localhost:8080');
