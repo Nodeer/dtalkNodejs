@@ -13,26 +13,15 @@ module.exports = {
 
 
         request(options, function(err, response, body) {
-            
-            if (!err) {
-/*
-{
-  "department": [ { "autoAddUser": false,  "createDeptGroup": false, "id": 1,"name": "wxmsfsds"}],
-  "errcode": 0,
-  "errmsg": "ok"
-}
-*/
-console.log( body);
-console.log( body.errcode);
-console.log( 0 == body.errcode);
-console.log( 0 === body.errcode);
 
-                if (body && 0 === body.errcode) {
-                    console.log('++success');
-                    cb.success(body);
+            if (!err) {
+
+                var data = JSON.parse(body);
+
+                if (data && 0 === data.errcode) {
+                    cb.success(data);
                 } else {
-                    console.log('++error');
-                    cb.error(body);
+                    cb.error(data);
                 }
 
             } else {
@@ -58,7 +47,7 @@ console.log( 0 === body.errcode);
                 } else {
                     cb.error(body);
                 }
-                
+
             } else {
                 cb.error(err);
             }

@@ -65,13 +65,9 @@ app.get('/ddWebapp/birthday/', function(req, res) {
     
     dTalkWebAppUtil.doAction(req.query.corpid, {
         success: function(data) {
-            console.log('======success ');
-            console.log(data);
             res.render('birthday', { title: '生日快乐', data: data });
         },
         error: function(err) {
-            console.log('======err ');
-console.log(err);
             res.render('birthday', { title: '生日快乐', errMsg: '获取信息失败' });
         }
     });
