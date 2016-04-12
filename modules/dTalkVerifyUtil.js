@@ -1,55 +1,72 @@
-var DTalkCrypt = require('./dTalkCrypt');
-var dTalkApiUtil = require('./dTalkApiUtil');
-var Rx = require('rx');
-var fs = require('fs');
+var DTalkCrypt = require('./dTalkCrypt'),
+    dTalkApiUtil = require('./dTalkApiUtil'),
+    fs = require('fs'),
+    path = require('path');
 
-var config = {
-    token: 'today8weather',
-    encodingAESKey: 'tneaaerppmdarj97z43vs5wd75mht47xt1k4v5aeces',
-    suiteid: 'suite3ameqjpytd5vnnrg', //第一次验证没有不用填 
-    suitesecret: 'Mw5YrZ2_XxKzmxemIhY3vwtTkku8jAB1ZUVCqTQQOJ7YZ65I_lGS2Lfs_TIcnxfe',
+var config = require("./data/dTalkConfig");
 
+config.prototype = {
     /*
     "suite_ticket"事件每二十分钟推送一次,数据格式如下
     {"SuiteKey": "suitexxxxxx","EventType": "suite_ticket","TimeStamp": 1234456,"SuiteTicket": "adsadsad"}
     */
-    getTicket: function(callback) {
 
-        fs.readFile(this.suiteid + '_ticket.json', function(err, data) {
+    getTicket: function(cb) {
+        //var self = this;
+        fs.readFile(path.resolve('./data/' + this.suiteid + '_ticket.json'), function(err, data) {
             if (err) {
-                callback(err);
-                console.log('getTicket err ' + err);
-                return;
+                cb.error(err);
+
+            } else {
+                cb.success({ SuiteTicket: JSON.parse(data.toString()).SuiteTicket });
             }
-            console.log("suite_ticket " + data);
-            callback({ SuiteTicket: JSON.parse(data.toString()).SuiteTicket });
+
         });
     },
-    saveTicket: function(data) {
+    setTicket: function(data) {
 
-        fs.writeFile(this.suiteid + '_ticket.json', JSON.stringify(data));
+        fs.writeFile(path.resolve('./data/' + this.suiteid + '_ticket.json'), JSON.stringify(data));
     },
     /*
     "tmp_auth_code"事件将企业对套件发起授权的时候推送,数据格式如下
     {"SuiteKey": "suitexxxxxx", "EventType": " tmp_auth_code","TimeStamp": 1234456,"AuthCode": "adads"}            
     */
-    getToken: function(callback) {
+    getToken: function(cb) {
 
-        fs.readFile(this.suiteid + '_token.json', function(err, data) {
+        fs.readFile(path.resolve('./data/' + this.suiteid + '_token.json'), function(err, data) {
             if (err) {
-                callback(err);
-                return;
+                cb.error(err);
+
+            } else {
+                cb.success({ AuthCode: JSON.parse(data.toString()).AuthCode });
             }
-            callback({ AuthCode: JSON.parse(data.toString()).AuthCode });
         });
     },
 
-    saveToken: function(data) {
+    setToken: function(data) {
 
-        fs.writeFile(this.suiteid + '_token.json', JSON.stringify(data));
+        fs.writeFile(path.resolve('./data/' + this.suiteid + '_token.json'), JSON.stringify(data));
+    },
+    //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
+    getPermanentCode: function(corpId, cb) {
+
+        fs.readFile(path.resolve('./data/' + this.suiteid + '_' + corpId + '_permanent_code.json'), function(err, data) {
+
+            if (err) {
+                cb.error(err);
+
+            } else {
+                cb.success({ permanentCode: JSON.parse(data.toString()).permanent_code });
+            }
+        });
+    },
+
+    setPermanentCode: function(corpInfo) {
+
+        fs.writeFile(path.resolve('./data/' + this.suiteid + '_' + corpInfo.auth_corp_info.corpid + '_permanent_code.json'), JSON.stringify(corpInfo));
     }
 
-}
+};
 
 var dTalkCrypt = new DTalkCrypt(config.token, config.encodingAESKey, config.suiteid || 'suite4xxxxxxxxxxxxxxx');
 
@@ -132,7 +149,7 @@ var dTalkVerifyUtil = {
 
             console.log("SuiteTicket " + message.SuiteTicket);
             cb.success(returnData);
-            config.saveTicket(message);
+            config.setTicket(message);
 
 
         } else if (message.EventType === 'tmp_auth_code') {
@@ -155,45 +172,51 @@ var dTalkVerifyUtil = {
 
             console.log("AuthCode " + message.AuthCode);
             cb.success(returnData);
-            config.saveToken(message);
+            config.setToken(message);
 
-            config.getTicket(function(data) {
+            config.getTicket({
 
-                dTalkApiUtil.getSuiteAccessToken(config.suiteid, config.suitesecret, data.SuiteTicket, {
+                success: function(data) {
 
-                        success: function(result) {
-                            //save SuiteAccessToken
-                            var suiteAccessToken = result.suite_access_token;
+                    dTalkApiUtil.getSuiteAccessToken(config.suiteid, config.suitesecret, data.SuiteTicket, {
 
-                            dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, {
-                                    success: function(corpInfo) {
-                                        //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
-                                        dTalkApiUtil.getActivateSuite(suiteAccessToken, config.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code, {
-                                            success: function(resultInfo) {
-                                                console.log('resultInfo ' + resultInfo);
-                                            },
-                                            error: function(err) {
-                                                console.log(err);
-                                            }
-                                        });
+                            success: function(result) {
+                                //save SuiteAccessToken
+                                var suiteAccessToken = result.suite_access_token;
 
-                                        fs.writeFile(config.suiteid + '_' + corpInfo.auth_corp_info.corpid + '_permanent_code.json', JSON.stringify(corpInfo));
-                                    },
-                                    error: function(err) {
-                                        console.log(err);
+                                dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, {
+                                        success: function(corpInfo) {
+                                            //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
+                                            dTalkApiUtil.getActivateSuite(suiteAccessToken, config.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code, {
+                                                success: function(resultInfo) {
+                                                    console.log('resultInfo ' + resultInfo);
+                                                },
+                                                error: function(err) {
+                                                    console.log(err);
+                                                }
+                                            });
+
+                                            config.setPermanentCode(corpInfo);
+                                        },
+                                        error: function(err) {
+                                            console.log(err);
+                                        }
                                     }
-                                }
 
 
-                            );
-                        },
-                        error: function(err) {
-                            console.log(err);
+                                );
+                            },
+                            error: function(err) {
+                                console.log(err);
+                            }
                         }
-                    }
 
-                );
+                    );
 
+                },
+                error: function(err) {
+                    console.log(err);
+                }
             });
 
 

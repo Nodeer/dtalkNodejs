@@ -1,5 +1,5 @@
-var querystring = require("querystring");
-var dTalkHttpsUtil = require('./dTalkHttpsUtil');
+var querystring = require("querystring"),
+    dTalkHttpsUtil = require('./dTalkHttpsUtil');
 
 module.exports = {
 
