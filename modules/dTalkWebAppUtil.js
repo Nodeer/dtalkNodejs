@@ -36,52 +36,48 @@ exports.doAction = function(corpId, cb) {
 
     dTalkConfig.getPermanentCode(corpId, function(err, data) {
 
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        permanentCode = data.permanentCode;
+
+
+        dTalkConfig.getTicket(function(err, data) {
+
             if (err) {
                 console.log(err);
                 return;
             }
 
-            permanentCode = data.permanentCode;
+            dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket,
+                function(err, result) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
 
+                    //save SuiteAccessToken
+                    var suiteAccessToken = result.suite_access_token;
 
-            dTalkConfig.getTicket(function(err, data) {
+                    dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode,
+                        function(err, data) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
 
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+                            console.log(data);
 
-                dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket,
-                    function(err, result) {
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
+                            WebAppUtil.getDepartmentList(data.access_token, cb);
 
-                        //save SuiteAccessToken
-                        var suiteAccessToken = result.suite_access_token;
+                        });
 
-                        dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode,
-                            function(err, data) {
-                                if (err) {
-                                    console.log(err);
-                                    return;
-                                }
+                });
 
-                                console.log(data);
+        });
 
-                                WebAppUtil.getDepartmentList(data.access_token, cb);
-
-                            });
-
-
-
-                    });
-
-            });
-
-
-        }
     });
 
 

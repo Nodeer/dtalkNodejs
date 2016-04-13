@@ -3,30 +3,26 @@ var request = require('request');
 var oapiHost = 'https://oapi.dingtalk.com';
 
 module.exports = {
-        // get json数据
-        get: function(path, cb) {
-            var options = {
-                method: 'GET',
-                url: oapiHost + path,
-                json: true
-            };
+    // get json数据
+    get: function(path, cb) {
+        var options = {
+            method: 'GET',
+            url: oapiHost + path,
+            json: true
+        };
 
-            request(options, function(err, response, body) {
+        request(options, function(err, response, body) {
 
-                    if (!err) {
-
-                        if (body && 0 === body.errcode) {
-                            cb(null, body);
-                        } else {
-                            cb({ errcode: body.errcode, errmsg: body.errmsg }
-                            });
-                    }
-
+            if (err) {
+                cb(err);
+            } else {
+                if (body && 0 === body.errcode) {
+                    cb(null, body);
                 } else {
-                    cb(err);
+                    cb({ errcode: body.errcode, errmsg: body.errmsg });
                 }
-
-            });
+            }
+        });
 
     },
     // post json数据
@@ -38,20 +34,16 @@ module.exports = {
         };
 
         request(options, function(err, response, body) {
-                if (!err) {
-
-                    if (body && 0 === body.errcode) {
-                        cb(null, body);
-                    } else {
-                        cb({ errcode: body.errcode, errmsg: body.errmsg }
-                        });
-                }
-
-            } else {
+            if (err) {
                 cb(err);
+            } else {
+                if (body && 0 === body.errcode) {
+                    cb(null, body);
+                } else {
+                    cb({ errcode: body.errcode, errmsg: body.errmsg });
+                }
             }
-
         });
 
-}
+    }
 }
