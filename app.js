@@ -26,12 +26,11 @@ app.post('/ddWebapp/verification', function(req, res) {
         encrypt: req.body.encrypt
     };
 
-    dTalkVerifyUtil.verification(params, {
-        success: function(data) {
-            res.send(data);
-        },
-        error: function(err) {
+    dTalkVerifyUtil.verification(params, function(err, data) {
+        if (err) {
             res.send(err);
+        } else {
+            res.send(data);
         }
     });
 });
@@ -62,14 +61,13 @@ app.get('/:cityId', function(req, res) {
 
 var dTalkWebAppUtil = require('./modules/dTalkWebAppUtil');
 app.get('/ddWebapp/birthday/', function(req, res) {
-    
-    dTalkWebAppUtil.doAction(req.query.corpid, {
-        success: function(data) {
-            res.render('birthday', { title: '生日快乐', data: data });
-        },
-        error: function(err) {
+
+    dTalkWebAppUtil.doAction(req.query.corpid, function(err, data) {
+        if (err) {
             res.render('birthday', { title: '生日快乐', errMsg: '获取信息失败' });
+            return;
         }
+        res.render('birthday', { title: '生日快乐', data: data });
     });
 });
 

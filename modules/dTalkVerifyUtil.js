@@ -1,8 +1,8 @@
 var DTalkCrypt = require('./dTalkCrypt'),
     dTalkApiUtil = require('./dTalkApiUtil'),
-    config = require("./dTalkConfig");
+    dTalkConfig = require("./dTalkConfig");
 
-var dTalkCrypt = new DTalkCrypt(config.token, config.encodingAESKey, config.suiteid || 'suite4xxxxxxxxxxxxxxx');
+var dTalkCrypt = new DTalkCrypt(dTalkConfig.token, dTalkConfig.encodingAESKey, dTalkConfig.suiteid || 'suite4xxxxxxxxxxxxxxx');
 
 var nonce_success = 'success';
 
@@ -26,7 +26,7 @@ var dTalkVerifyUtil = {
 
         if (signature !== dTalkCrypt.getSignature(timestamp, nonce, encrypt)) {
             console.log('Invalid signature');
-            cb.success({ message: 'Invalid signature' });
+            cb({ message: 'Invalid signature' });
 
             return;
         }
@@ -61,7 +61,7 @@ var dTalkVerifyUtil = {
             returnData.nonce = nonce;
             returnData.msg_signature = dTalkCrypt.getSignature(returnData.timeStamp, returnData.nonce, returnData.encrypt); //新签名
 
-            cb.success(returnData);
+            cb(null, returnData);
 
         } else if (message.EventType === 'suite_ticket') {
             /*
@@ -82,8 +82,8 @@ var dTalkVerifyUtil = {
 
 
             console.log("SuiteTicket " + message.SuiteTicket);
-            cb.success(returnData);
-            config.setTicket(message);
+            cb(null, returnData);
+            dTalkConfig.setTicket(message);
 
 
         } else if (message.EventType === 'tmp_auth_code') {
@@ -105,52 +105,51 @@ var dTalkVerifyUtil = {
 
 
             console.log("AuthCode " + message.AuthCode);
-            cb.success(returnData);
-            config.setToken(message);
+            cb(null, returnData);
+            dTalkConfig.setToken(message);
 
-            config.getTicket({
+            dTalkConfig.getTicket(function(err, data) {
 
-                success: function(data) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
 
-                    dTalkApiUtil.getSuiteAccessToken(config.suiteid, config.suitesecret, data.SuiteTicket, {
+                dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket, function(err, suiteToken) {
 
-                            success: function(result) {
-                                //save SuiteAccessToken
-                                var suiteAccessToken = result.suite_access_token;
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
 
-                                dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, {
-                                        success: function(corpInfo) {
-                                            //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
-                                            dTalkApiUtil.getActivateSuite(suiteAccessToken, config.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code, {
-                                                success: function(resultInfo) {
-                                                    console.log('resultInfo ' + resultInfo);
-                                                },
-                                                error: function(err) {
-                                                    console.log(err);
-                                                }
-                                            });
+                    //save SuiteAccessToken
+                    var suiteAccessToken = suiteToken.suite_access_token;
 
-                                            config.setPermanentCode(corpInfo);
-                                        },
-                                        error: function(err) {
-                                            console.log(err);
-                                        }
+                    dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode,
+                        function(err, corpInfo) {
+
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+
+                            //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
+                            dTalkApiUtil.getActivateSuite(suiteAccessToken, dTalkConfig.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code,
+                                function(err, resultInfo) {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
                                     }
 
+                                    console.log('resultInfo ' + JSON.stringify(resultInfo));
+                                    dTalkConfig.setPermanentCode(corpInfo);
+                                });
 
-                                );
-                            },
-                            error: function(err) {
-                                console.log(err);
-                            }
-                        }
 
-                    );
+                        });
+                });
 
-                },
-                error: function(err) {
-                    console.log(err);
-                }
+
             });
 
 
@@ -172,7 +171,7 @@ var dTalkVerifyUtil = {
             returnData.nonce = nonce;
 
             console.log("AuthCorpId " + message.AuthCorpId);
-            cb.success(returnData);
+            cb(null, returnData);
 
         }
     }

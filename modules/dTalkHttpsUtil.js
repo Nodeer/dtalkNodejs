@@ -3,32 +3,30 @@ var request = require('request');
 var oapiHost = 'https://oapi.dingtalk.com';
 
 module.exports = {
-    // get json数据
-    get: function(path, cb) {
-        var options = {
-            method: 'GET',
-            url: oapiHost + path
-        };
+        // get json数据
+        get: function(path, cb) {
+            var options = {
+                method: 'GET',
+                url: oapiHost + path,
+                json: true
+            };
 
+            request(options, function(err, response, body) {
 
+                    if (!err) {
 
-        request(options, function(err, response, body) {
+                        if (body && 0 === body.errcode) {
+                            cb(null, body);
+                        } else {
+                            cb({ errcode: body.errcode, errmsg: body.errmsg }
+                            });
+                    }
 
-            if (!err) {
-
-                var data = JSON.parse(body);
-
-                if (data && 0 === data.errcode) {
-                    cb.success(data);
                 } else {
-                    cb.error(data);
+                    cb(err);
                 }
 
-            } else {
-                cb.error(err);
-            }
-
-        });
+            });
 
     },
     // post json数据
@@ -40,19 +38,20 @@ module.exports = {
         };
 
         request(options, function(err, response, body) {
-            if (!err) {
+                if (!err) {
 
-                if (body && 0 === body.errcode) {
-                    cb.success(body);
-                } else {
-                    cb.error(body);
+                    if (body && 0 === body.errcode) {
+                        cb(null, body);
+                    } else {
+                        cb({ errcode: body.errcode, errmsg: body.errmsg }
+                        });
                 }
 
             } else {
-                cb.error(err);
+                cb(err);
             }
 
         });
 
-    }
+}
 }

@@ -19,10 +19,9 @@ var config = {
         //var self = this;
         fs.readFile(path.resolve('./data/' + this.suiteid + '_ticket.json'), function(err, data) {
             if (err) {
-                cb.error(err);
-
+                cb(err);
             } else {
-                cb.success({ SuiteTicket: JSON.parse(data.toString()).SuiteTicket });
+                cb(null, { SuiteTicket: JSON.parse(data.toString()).SuiteTicket });
             }
 
         });
@@ -39,10 +38,10 @@ var config = {
 
         fs.readFile(path.resolve('./data/' + this.suiteid + '_token.json'), function(err, data) {
             if (err) {
-                cb.error(err);
+                cb(err);
 
             } else {
-                cb.success({ AuthCode: JSON.parse(data.toString()).AuthCode });
+                cb(null, { AuthCode: JSON.parse(data.toString()).AuthCode });
             }
         });
     },
@@ -57,10 +56,10 @@ var config = {
         fs.readFile(path.resolve('./data/' + this.suiteid + '_' + corpId + '_permanent_code.json'), function(err, data) {
 
             if (err) {
-                cb.error(err);
+                cb(err);
 
             } else {
-                cb.success({ permanentCode: JSON.parse(data.toString()).permanent_code });
+                cb(null, { permanentCode: JSON.parse(data.toString()).permanent_code });
             }
         });
     },
