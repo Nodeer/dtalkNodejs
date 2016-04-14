@@ -132,7 +132,7 @@ var dTalkVerifyUtil = {
                     });
                 },
                 function(suiteAccessToken, callback) {
-                    dTalkConfig.getPermanentCode(suiteAccessToken, message.AuthCode, function(err, data) {
+                    dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, function(err, data) {
 
                         if (err) {
                             callback(err);
