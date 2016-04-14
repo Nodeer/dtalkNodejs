@@ -1,5 +1,6 @@
 var DTalkCrypt = require('./dTalkCrypt'),
     dTalkApiUtil = require('./dTalkApiUtil'),
+    async = require('async'),
     dTalkConfig = require("./dTalkConfig");
 
 var dTalkCrypt = new DTalkCrypt(dTalkConfig.token, dTalkConfig.encodingAESKey, dTalkConfig.suiteid || 'suite4xxxxxxxxxxxxxxx');
@@ -106,51 +107,63 @@ var dTalkVerifyUtil = {
 
             console.log("AuthCode " + message.AuthCode);
             cb(null, returnData);
+
             dTalkConfig.setToken(message);
 
-            dTalkConfig.getTicket(function(err, data) {
+            async.waterfall([
+                function(callback) {
+                    dTalkConfig.getTicket(function(err, data) {
 
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        callback(null, data.SuiteTicket);
+                    });
+                },
+                function(suiteTicket, callback) {
+                    dTalkConfig.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, suiteTicket, function(err, data) {
 
-                dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket, function(err, suiteToken) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        callback(null, data.suite_access_token);
+                    });
+                },
+                function(suiteAccessToken, callback) {
+                    dTalkConfig.getPermanentCode(suiteAccessToken, message.AuthCode, function(err, data) {
 
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-
-                    //save SuiteAccessToken
-                    var suiteAccessToken = suiteToken.suite_access_token;
-
-                    dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode,
-                        function(err, corpInfo) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        callback(null, suiteAccessToken, data);
+                    });
+                },
+                function(suiteAccessToken, corpInfo, callback) {
+                    dTalkApiUtil.getActivateSuite(suiteAccessToken, dTalkConfig.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code,
+                        function(err, resultInfo) {
 
                             if (err) {
-                                console.log(err);
+                                callback(err, corpInfo);
                                 return;
                             }
+                            console.log('resultInfo ' + JSON.stringify(resultInfo));
 
-                            //{"permanent_code": "xxxx","auth_corp_info":{"corpid": "xxxx","corp_name": "name"}}
-                            dTalkApiUtil.getActivateSuite(suiteAccessToken, dTalkConfig.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code,
-                                function(err, resultInfo) {
-                                    if (err) {
-                                        console.log(err);
-                                        return;
-                                    }
-
-                                    console.log('resultInfo ' + JSON.stringify(resultInfo));
-                                    dTalkConfig.setPermanentCode(corpInfo);
-                                });
-
-
+                            callback(null, corpInfo);
                         });
-                });
+                }
+            ], function(err, corpInfo) {
 
-
+                if (!corpInfo) {
+                    dTalkConfig.setPermanentCode(corpInfo);
+                }
+                if (!err) {
+                    console.log(err);
+                }
             });
+
 
 
         } else if (message.EventType === 'change_auth') {

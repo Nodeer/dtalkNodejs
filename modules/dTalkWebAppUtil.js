@@ -32,7 +32,7 @@ var WebAppUtil = {
 
 exports.doAction = function(corpId, cb) {
 
-    
+
     async.waterfall([
         function(callback) {
 
@@ -76,7 +76,7 @@ exports.doAction = function(corpId, cb) {
                         return;
                     }
 
-                    callback(null,data);
+                    callback(null, data);
                 });
         }
 
@@ -85,7 +85,7 @@ exports.doAction = function(corpId, cb) {
 
             WebAppUtil.getDepartmentList(data.access_token, cb);
 
-        }else{
+        } else {
             cb(err);
         }
     });
