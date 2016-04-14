@@ -76,7 +76,7 @@ exports.doAction = function(corpId, cb) {
                         return;
                     }
 
-                    callback(data);
+                    callback(null,data);
                 });
         }
 
@@ -84,7 +84,9 @@ exports.doAction = function(corpId, cb) {
         if (!err) {
 
             WebAppUtil.getDepartmentList(data.access_token, cb);
-            
+
+        }else{
+            cb(err);
         }
     });
     /*
