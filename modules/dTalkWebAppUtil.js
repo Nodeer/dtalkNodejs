@@ -2,6 +2,7 @@ var querystring = require("querystring"),
     dTalkHttpsUtil = require('./dTalkHttpsUtil'),
     DTalkCrypt = require('./dTalkCrypt'),
     dTalkApiUtil = require('./dTalkApiUtil'),
+    async = require('async'),
     dTalkConfig = require("./dTalkConfig");
 
 var WebAppUtil = {
@@ -31,54 +32,107 @@ var WebAppUtil = {
 
 exports.doAction = function(corpId, cb) {
 
-    var permanentCode = '';
+    
+    async.waterfall([
+        function(callback) {
 
+            dTalkConfig.getPermanentCode(corpId, function(err, data) {
 
-    dTalkConfig.getPermanentCode(corpId, function(err, data) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
 
-        if (err) {
-            console.log(err);
-            return;
+                callback(null, data.permanentCode);
+            });
+        },
+        function(permanentCode, callback) {
+            dTalkConfig.getTicket(function(err, data) {
+
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                callback(null, permanentCode, data.SuiteTicket);
+            });
+        },
+        function(permanentCode, suiteTicket, callback) {
+            dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, suiteTicket,
+                function(err, data) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    callback(null, permanentCode, data.suite_access_token);
+                });
+        },
+        function(permanentCode, suiteAccessToken, callback) {
+            dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode,
+                function(err, data) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    callback(data);
+                });
         }
 
-        permanentCode = data.permanentCode;
+    ], function(err, data) {
+        if (!err) {
 
-
-        dTalkConfig.getTicket(function(err, data) {
+            WebAppUtil.getDepartmentList(data.access_token, cb);
+            
+        }
+    });
+    /*
+        dTalkConfig.getPermanentCode(corpId, function(err, data) {
 
             if (err) {
                 console.log(err);
                 return;
             }
 
-            dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket,
-                function(err, result) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
+            permanentCode = data.permanentCode;
 
-                    //save SuiteAccessToken
-                    var suiteAccessToken = result.suite_access_token;
 
-                    dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode,
-                        function(err, data) {
-                            if (err) {
-                                console.log(err);
-                                return;
-                            }
+            dTalkConfig.getTicket(function(err, data) {
 
-                            console.log(data);
+                if (err) {
+                    console.log(err);
+                    return;
+                }
 
-                            WebAppUtil.getDepartmentList(data.access_token, cb);
+                dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, data.SuiteTicket,
+                    function(err, result) {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
 
-                        });
+                        //save SuiteAccessToken
+                        var suiteAccessToken = result.suite_access_token;
 
-                });
+                        dTalkApiUtil.getAccessToken(suiteAccessToken, corpId, permanentCode,
+                            function(err, data) {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+
+                                console.log(data);
+
+                                WebAppUtil.getDepartmentList(data.access_token, cb);
+
+                            });
+
+                    });
+
+            });
 
         });
-
-    });
-
+    */
 
 };
