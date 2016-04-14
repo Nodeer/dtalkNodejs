@@ -132,35 +132,36 @@ var dTalkVerifyUtil = {
                     });
                 },
                 function(suiteAccessToken, callback) {
-                    dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, function(err, data) {
+                    dTalkApiUtil.getPermanentCode(suiteAccessToken, message.AuthCode, function(err, corpInfo) {
 
                         if (err) {
                             callback(err);
                             return;
                         }
-                        callback(null, suiteAccessToken, data);
+                        dTalkConfig.setPermanentCode(corpInfo);
+                        callback(null, suiteAccessToken, corpInfo);
                     });
                 },
                 function(suiteAccessToken, corpInfo, callback) {
                     dTalkApiUtil.getActivateSuite(suiteAccessToken, dTalkConfig.suiteid, corpInfo.auth_corp_info.corpid, corpInfo.permanent_code,
-                        function(err, resultInfo) {
+                        function(err, activateInfo) {
 
                             if (err) {
-                                callback(err, corpInfo);
+                                callback(err);
                                 return;
                             }
-                            console.log('resultInfo ' + JSON.stringify(resultInfo));
+                            console.log('activateInfo ' + JSON.stringify(activateInfo));
 
-                            callback(null, corpInfo);
+                            callback(null, activateInfo);
                         });
                 }
-            ], function(err, corpInfo) {
+            ], function(err, activateInfo) {
 
-                if (!corpInfo) {
-                    dTalkConfig.setPermanentCode(corpInfo);
-                }
-                if (!err) {
+
+                if (err) {
                     console.log(err);
+                } else {
+                    console.log(activateInfo);
                 }
             });
 
