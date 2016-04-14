@@ -122,7 +122,7 @@ var dTalkVerifyUtil = {
                     });
                 },
                 function(suiteTicket, callback) {
-                    dTalkConfig.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, suiteTicket, function(err, data) {
+                    dTalkApiUtil.getSuiteAccessToken(dTalkConfig.suiteid, dTalkConfig.suitesecret, suiteTicket, function(err, data) {
 
                         if (err) {
                             callback(err);
